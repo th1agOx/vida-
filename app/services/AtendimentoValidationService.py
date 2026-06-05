@@ -7,17 +7,19 @@ class AtendimentoValidationService:
     def __init__(
         self,
         paciente_repository,
-        consulta_repository
+        consulta_repository,
+        pagamento_repository,
+        medico_repository
     ):
 
-        self.paciente_repository = (
-            paciente_repository
-        )
+        self.paciente_repository = paciente_repository
 
-        self.consulta_repository = (
-            consulta_repository
-        )
+        self.consulta_repository = consulta_repository
 
+        self.pagamento_repository = pagamento_repository
+
+        self.medico_repository = medico_repository
+        
     def documentos_validos(
         self,
         paciente_id: int
@@ -32,14 +34,12 @@ class AtendimentoValidationService:
 
         if paciente is None:
             return False
-
-        if not paciente.nome:
-            return False
-
-        if not paciente.cpf:
-            return False
-
-        return True
+        
+        return (
+            paciente.nome is not None
+            and 
+            paciente.cpf is not None
+        )
 
     def possui_agendamento(
         self,
@@ -53,20 +53,40 @@ class AtendimentoValidationService:
             )
         )
 
-    def pode_ser_atendido(
+    def pagamento_em_dia(
         self,
-        dto: AtendimentoValidationDTO
+        paciente_id : int
+    ) -> bool:
+
+        return not (
+            self.pagamento_repository
+            .possui_pagamento_pendente(
+                paciente_id
+            )
+        )
+
+    def medico_disponivel(
+        self,
+        consulta_id : int
     ) -> bool:
 
         return (
-
-            self.documentos_validos(
-                dto.id_paciente
-            )
-
-            and
-
-            self.possui_agendamento(
-                dto.id_paciente
+            self.medico_repository
+            .medico_disponivel(
+                consulta_id
             )
         )
+    
+    def validar(
+        self,
+        dto: AtendimentoValidationDTO
+    ) -> bool:
+        
+        if dto.tipo_atendimento == "emergencia":
+
+            return self.validar_atendimento_emergencial(
+                dto
+            )
+        return self.vali_atendimento_normal(
+            dto
+        )   

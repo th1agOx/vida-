@@ -3,9 +3,9 @@ from fastapi import Depends
 
 from sqlalchemy.orm import Session
 
-from app.database.connection import get_db
+from app.database.connector import get_db
 
-from app.dto.atendimento_validation_dto import (
+from app.dto.AtendimentoValidationDTO import (
     AtendimentoValidationDTO
 )
 
@@ -17,7 +17,7 @@ from app.repositories.consulta_repository import (
     ConsultaRepository
 )
 
-from app.services.atendimento_validation_service import (
+from app.services.AtendimentoValidationService import (
     AtendimentoValidationService
 )
 
@@ -34,26 +34,36 @@ def validar_atendimento(
 ):
 
     paciente_repository = (
-        PacienteRepository(db)
+        paciente_repository(db)
     )
 
     consulta_repository = (
-        ConsultaRepository(db)
+        consulta_repository(db)
+    )
+
+    pagamento_repository = (
+        paciente_repository(db)
+    )
+
+    medico_repository = (
+        medico_repository(db)
     )
 
     service = (
         AtendimentoValidationService(
             paciente_repository,
-            consulta_repository
+            consulta_repository,
+            pagamento_repository,
+            medico_repository
         )
     )
 
-    permitido = (
-        service.pode_ser_atendido(
+    resultado = ( 
+        service.validar(
             dto
         )
     )
 
     return {
-        "atendimento_liberado": permitido
+        "atendimento_liberado": resultado,
     }

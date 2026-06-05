@@ -1,5 +1,15 @@
-from sqlalchemy import String, Date, Integer, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import (
+    String, 
+    Date, 
+    Integer, 
+    ForeignKey
+)
+
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column,
+    relationship
+)
 
 from app.database.base import Base
 

@@ -24,19 +24,3 @@ class ConsultaRepository:
         )
 
         return consulta is not None
-
-        listar_agendadas()
-
-        listar_canceladas()
-
-        listar_por_medico()
-
-        listar_por_paciente()
-### metodos da regra de negócio :
-        existe_agendamento_paciente()
-
-        verificar_horario_disponivel()
-
-        confirmar_consulta()
-
-        cancelar_consulta()
