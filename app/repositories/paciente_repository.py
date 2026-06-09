@@ -1,6 +1,6 @@
-from app.models import paciente
-from models.paciente import Paciente
 from sqlalchemy.orm import Session
+
+from models.paciente import Paciente
 
 class PacienteRepository:
 

@@ -16,9 +16,26 @@ class PagamentiRepository:
             self.db.query(Pagamento)
             .filter(
                 Pagamento.id_paciente == paciente_id,
-                Pagamento.status == "PENDENTE"
+                Pagamento.status == "pendente"
             )
             .first()
             is not None
     )
+
+    def criar_cobranca(
+        self,
+        pagamento: Pagamento
+    ) -> Pagamento:
+
+      self.db.add(
+          pagamento
+      )  
+
+      self.db.commit()
+
+      self.db.refresh(
+          pagamento
+        )
+
+      return pagamento
     

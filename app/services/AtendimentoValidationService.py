@@ -8,8 +8,7 @@ class AtendimentoValidationService:
         self,
         paciente_repository,
         consulta_repository,
-        pagamento_repository,
-        medico_repository
+        pagamento_repository
     ):
 
         self.paciente_repository = paciente_repository
@@ -18,8 +17,6 @@ class AtendimentoValidationService:
 
         self.pagamento_repository = pagamento_repository
 
-        self.medico_repository = medico_repository
-        
     def documentos_validos(
         self,
         paciente_id: int
@@ -41,14 +38,14 @@ class AtendimentoValidationService:
             paciente.cpf is not None
         )
 
-    def possui_agendamento(
+    def consulta_valida(
         self,
         paciente_id: int
     ) -> bool:
 
         return (
             self.consulta_repository
-            .possui_agendamento(
+            .consulta_valida(
                 paciente_id
             )
         )
@@ -64,16 +61,52 @@ class AtendimentoValidationService:
                 paciente_id
             )
         )
-
-    def medico_disponivel(
+    
+    def validar_atendimento_normal(
         self,
-        consulta_id : int
+        dto
     ) -> bool:
 
         return (
-            self.medico_repository
-            .medico_disponivel(
-                consulta_id
+
+            self.consulta_valida(
+                dto.id_paciente
+            )
+
+            and
+
+            self.documentos_validos(
+                dto.id_paciente
+            )
+
+            and
+
+            self.pagamentos_em_dia(
+                dto.id_paciente
+            )
+        )
+    
+    def validar_atendimento_emergencial(
+        self,
+        dto
+    ) -> bool:
+
+        return (
+
+            self.consulta_valida(
+                dto.id_paciente
+            )
+
+            and
+
+            self.documentos_validos(
+                dto.id_paciente
+            )
+
+            or
+
+            self.pagamentos_em_dia(
+                dto.id_paciente
             )
         )
     
@@ -87,6 +120,6 @@ class AtendimentoValidationService:
             return self.validar_atendimento_emergencial(
                 dto
             )
-        return self.vali_atendimento_normal(
+        return self.validar_atendimento_normal(
             dto
         )   

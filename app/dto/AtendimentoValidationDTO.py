@@ -1,3 +1,4 @@
+import datetime
 from pydantic import BaseModel
 
 from app.enums.tipo_atendimento import (

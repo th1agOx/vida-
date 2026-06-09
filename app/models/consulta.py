@@ -30,7 +30,7 @@ class Consulta(Base):
         DateTime
     )
 
-    motivo: Mapped[str] = mapped_column(
+    queixa_principal: Mapped[str] = mapped_column(
         String(200)
     )
 
